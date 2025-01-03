@@ -1,4 +1,4 @@
-use std::{fs::{File, Metadata}, io::{stdout, Write}, mem::transmute, path::PathBuf};
+use std::{fs::{File, Metadata}, io::{stdin, stdout, Read, Write}, mem::transmute, path::PathBuf};
 
 use anyhow::Result;
 use clap::Parser;
@@ -13,11 +13,11 @@ struct Args {
     pub path: PathBuf,
 
     /// Writes all input to the root directory
-    #[clap(short, long, group = "mode")]
+    #[clap(short, group = "mode")]
     pub input: bool,
 
     /// Outputs all data stored in the root directory
-    #[clap(short, long, group = "mode")]
+    #[clap(short, group = "mode", default_value = "true")]
     pub output: bool,
 
 }
@@ -26,25 +26,36 @@ struct Args {
 fn main() -> Result<()> {
     let args = Args::parse();
 
-    let mut out = stdout().lock();
 
     let files = WalkDir::new(args.path)
         .sort_by_file_name()
         .into_iter()
         .filter_map(Result::ok)
-        .filter_map(|dir| dir.metadata().ok())
-        .filter(Metadata::is_file);
-    
+        .filter_map(|dir| dir.metadata().ok().filter(Metadata::is_file).map(|meta| (dir, meta)));
+ 
     if args.input {
-        todo!()
+        let mut input = stdin().lock();
+
+        let mut data = [0u8; 3];
+        
+        for (dir, _) in files {
+            input.read(&mut data)?;
+
+            set(&File::open(dir.path())?, data)?;
+        }
+
     } else if args.output {
-        let _ = files.map(get)
-            .filter_map(Result::ok)
-            .map(|data| out.write(&data))
-            .try_fold(0, |acc, res| res.map(|bytes| acc + bytes))?;
+        let mut out = stdout().lock();
+        
+        for (_, meta) in files {
+            let data = get(meta)?;
+            out.write(&data)?;
+        }
 
         out.flush()?;
     } else {
+        // Unreachable because flags cannot be disabled,
+        // and output is true by default.
         unreachable!();
     }
 
