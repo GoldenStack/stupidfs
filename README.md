@@ -14,6 +14,8 @@ This can be used as a stealthy way to hide data, or as a useless waste of time.
 
 ## Usage
 
+First, run `cargo install stupidfs` or compile it from source.
+
 To read, give stupidfs a directory and read the data from it.
 ```sh
 stupidfs -o ./data
