@@ -12,6 +12,18 @@ hold more files per file.
 
 This can be used as a stealthy way to hide data, or as a useless waste of time.
 
+## How does it work?
+
+stupidfs stores information in the 'last modified date' of files in the target
+directory. The data is stored in the sub-second portion of the timestamp, so it
+shouldn't have any visible effect when applied to a directory.
+
+stupidfs is a good way to store files inconspicuously, since it's quite hard to
+tell if a directory contains data stored under stupidfs. in fact, the data
+itself is somewhat volatile: on my machine, copy pasting the folder updates the
+last modified date, rendering useless the idea of copying data from an existing
+drive for later use.
+
 ## Usage
 
 First, run `cargo install stupidfs` or compile it from source.
@@ -35,18 +47,6 @@ Some notes:
 
 stupidfs might not work on filesystems with less than nanosecond granularity,
 but it works on my ext4 filesystem that presumably has large enough inodes.
-
-## How does it work?
-
-stupidfs stores information in the 'last modified date' of files in a directory.
-
-The data is stored in the sub-second portion of the timestamp, so in most cases
-running stupidfs over a file won't produce any visible change. Even if the
-entire date is shown, it's basically useless because the information added by
-having such precise timestamps for files is rarely useful.
-
-stupidfs is an undercover storage system: it's impossible to tell whether or not
-data is stored within a directory with stupidfs.
 
 
 ## Visibility
