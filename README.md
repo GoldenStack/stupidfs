@@ -12,15 +12,36 @@ hold more files per file.
 
 This can be used as a stealthy way to hide data, or as a useless waste of time.
 
-## How does it work?
+## Usage
 
+To read, give stupidfs a directory and read the data from it.
+```sh
+stupidfs -o ./data
+```
+
+To write, give stupidfs a directory and pipe data into it.
+
+```sh
+echo "Hello, world!" | stupidfs -i ./data
+```
+
+Some notes:
+- Output mode is enabled by default, so the `-o` is optional.
+- When writing, extra data will be ignored.
+- One file is required for every three bytes of input.
+
+
+stupidfs might not work on filesystems with less than nanosecond granularity,
+but it works on my ext4 filesystem that presumably has large enough inodes.
+
+## How does it work?
 
 stupidfs stores information in the 'last modified date' of files in a directory.
 
 The data is stored in the sub-second portion of the timestamp, so in most cases
 running stupidfs over a file won't produce any visible change. Even if the
-entire date is shown, it's basically useless because timestamps this specific,
-in this case, don't really mean anything.
+entire date is shown, it's basically useless because the information added by
+having such precise timestamps for files is rarely useful.
 
 stupidfs is an undercover storage system: it's impossible to tell whether or not
 data is stored within a directory with stupidfs.
