@@ -1,7 +1,10 @@
 [package]
 name = "stupidfs"
+description = "More files per file: hide files by storing them in the metadata of other files"
+repository = "https://github.com/GoldenStack/stupidfs"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
 
 [dependencies]
 anyhow = "1.0.95"
