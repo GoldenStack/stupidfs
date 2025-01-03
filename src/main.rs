@@ -39,6 +39,7 @@ fn main() -> Result<()> {
         let mut data = [0u8; 3];
         
         for (dir, _) in files {
+            data.fill(0);
             input.read(&mut data)?;
 
             set(&File::open(dir.path())?, data)?;
