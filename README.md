@@ -18,11 +18,11 @@ stupidfs stores information in the 'last modified date' of files in the target
 directory. The data is stored in the sub-second portion of the timestamp, so it
 shouldn't have any visible effect when applied to a directory.
 
-stupidfs is a good way to store files inconspicuously, since it's quite hard to
-tell if a directory contains data stored under stupidfs. in fact, the data
-itself is somewhat volatile: on my machine, copy pasting the folder updates the
-last modified date, rendering useless the idea of copying data from an existing
-drive for later use.
+stupidfs is a good<sup>[citation needed]</sup> way to store files
+inconspicuously, since it's quite hard to tell if a directory contains data
+stored under stupidfs. in fact, the data itself is somewhat volatile: on my
+machine, copy pasting the folder updates the last modified date, rendering
+useless the idea of copying data from an existing drive for later use.
 
 ## Usage
 
@@ -41,31 +41,36 @@ echo "Hello, world!" | stupidfs -i ./data
 
 Some notes:
 - Output mode is enabled by default, so the `-o` is optional.
-- When writing, extra data will be ignored.
-- One file is required for every three bytes of input.
+- A warning will be produced while writing if extra bytes are provided.
+- One file is required for every two bytes of input.
 
-
-stupidfs might not work on filesystems with less than nanosecond granularity,
-but it works on my ext4 filesystem that presumably has large enough inodes.
+stupidfs works on files with at least 128 nanosecond granularity. This includes
+NTFS and ext4, and doesn't include FAT32 and ext4 with small inodes.
 
 
 ## Visibility
-stupidfs stores data in the last 24 bits of the timestamp of the last
-modification date of each file. The first few bits of the sub-second portion are
-not touched, meaning the actual change in the timestamp is very small (up to
-16.778ms).
+stupidfs stores data in the last few bits of the last modification date of each
+file (only up to granularity of 128ns so that NTFS is supported). The first
+few bits of the sub-second portion are not touched, meaning the actual change
+in the timestamp is very small (up to 8.388ms).
 
 ## Accuracy
-A filesystem supporting nanosecond resolution on timestamps does not necessarily
-mean the kernel and hardware support timestamps of such a resolution. If the
-hardware doesn't support this resolution or the kernel doesn't update the system
-time that often, machine times might end up clustered around (or exactly on)
-some greatest common divisor (e.g. microseconds). If this is the case, it'll be
-pretty easy to figure out which files were artificially modified.
+A filesystem supporting 128ns timestamp resolution does not necessarily mean the
+kernel and hardware support timestamps of such a resolution.
+
+If the hardware doesn't support this resolution or the kernel doesn't update
+the system time that often, machine times might end up clustered around (or
+exactly on) some greatest common divisor (e.g. microseconds). If this is the
+case, it'll be pretty easy to figure out which files were artificially modified.
+
+The fact that the last 128ns is untouched helps with this somewhat since
+modifying dates at a lower resolution is compatible with all higher resolutions,
+but this still shouldn't be relied on.
 
 ## Information
-Technically more than 3 bytes of information is stored per file, as other file
+Technically, more than 2 bytes of information is used per file, as other file
 metadata (e.g. filenames) is used to determine where a given file's bytes are
 situated within the actual stored data. This isn't particularly important
-though, since it's not correlated with actual file data and can't be used to
-reconstruct anything.
+though, since it's not correlated with actual file contents and can't be used to
+reconstruct anything—it's just an interesting technicality that is probably
+worth mentioning.
