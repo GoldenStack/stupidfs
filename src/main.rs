@@ -44,7 +44,15 @@ fn main() -> Result<()> {
 
             set(&File::open(dir.path())?, data)?;
         }
+        
+        let mut provided = 0;
+        while let Some(read) = input.read(&mut [0; 1000]).ok().filter(|&c| c > 0) {
+            provided += read;
+        }
 
+        if provided > 0 {
+            eprintln!("Failed to write last {provided} byte(s): not enough files");
+        }
     } else if args.output {
         let mut out = stdout().lock();
         
