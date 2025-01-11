@@ -2,7 +2,7 @@
 name = "stupidfs"
 description = "More files per file: hide files by storing them in the metadata of other files"
 repository = "https://github.com/GoldenStack/stupidfs"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 license = "MIT"
 
