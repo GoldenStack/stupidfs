@@ -18,7 +18,7 @@ stupidfs stores information in the 'last modified date' of files in the target
 directory. The data is stored in the sub-second portion of the timestamp, so it
 shouldn't have any visible effect when applied to a directory.
 
-stupidfs is a good<sup>[citation needed]</sup> way to store files
+stupidfs is a good<sup>[[citation needed](https://en.m.wikipedia.org/wiki/Wikipedia:Citation_needed)]</sup> way to store files
 inconspicuously, since it's quite hard to tell if a directory contains data
 stored under stupidfs. in fact, the data itself is somewhat volatile: on my
 machine, copy pasting the folder updates the last modified date, rendering
